@@ -378,25 +378,16 @@ function renderAll() {
     cityGroups[key].items.push(i);
   });
 
-  // 为每个同城组生成螺旋排列的坐标
-  const positions = []; // [lat, lng] for each entry
+  // 同城多人按姓名排序，竖向排列
+  const positions = [];
   Object.values(cityGroups).forEach(g => {
-    const n = g.items.length;
     const centerLat = g.lat, centerLng = g.lng;
-    g.items.forEach((entryIdx, idx) => {
-      if (n === 1) {
-        positions[entryIdx] = [centerLat, centerLng];
-      } else {
-        // 黄金角螺旋：每个点围绕中心均匀散开，层次分明
-        const angle = idx * 2.399963; // 黄金角 ≈ 137.5°
-        const r = 0.012 + idx * 0.008; // 第一圈 ~1.3km，逐圈递增 ~900m
-        const latR = r;
-        const lngR = r / Math.cos(centerLat * Math.PI / 180); // 经度补偿
-        positions[entryIdx] = [
-          centerLat + latR * Math.cos(angle),
-          centerLng + lngR * Math.sin(angle),
-        ];
-      }
+    // 按姓名排序
+    const sorted = g.items.slice().sort((a, b) => entries[a].name.localeCompare(entries[b].name, 'zh'));
+    const spacing = 0.004; // 每个名字间隔约 450m
+    const start = -(sorted.length - 1) * spacing / 2; // 居中
+    sorted.forEach((entryIdx, i) => {
+      positions[entryIdx] = [centerLat + start + i * spacing, centerLng];
     });
   });
 
