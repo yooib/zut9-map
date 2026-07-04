@@ -389,7 +389,7 @@ function renderAll() {
       } else {
         // 黄金角螺旋：每个点围绕中心均匀散开，层次分明
         const angle = idx * 2.399963; // 黄金角 ≈ 137.5°
-        const r = 0.0005 + idx * 0.0006; // 第一圈 ~55m，逐圈递增 ~67m
+        const r = 0.012 + idx * 0.008; // 第一圈 ~1.3km，逐圈递增 ~900m
         const latR = r;
         const lngR = r / Math.cos(centerLat * Math.PI / 180); // 经度补偿
         positions[entryIdx] = [
