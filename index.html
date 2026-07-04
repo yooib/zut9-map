@@ -370,15 +370,41 @@ function renderMeasureLine() {
 
 function renderAll() {
   userGroup.clearLayers();
-  const coordCount = {};
-  entries.forEach((e,i) => {
-    const key = e.lng.toFixed(4)+','+e.lat.toFixed(4);
-    coordCount[key] = (coordCount[key]||0)+1;
-    const idx = coordCount[key]-1;
-    const lat = e.lat+idx*.1, lng = e.lng+idx*.15;
+  // 先统计每个城市有多少人
+  const cityGroups = {};
+  entries.forEach((e, i) => {
+    const key = e.lng.toFixed(4) + ',' + e.lat.toFixed(4);
+    if (!cityGroups[key]) cityGroups[key] = { lng: e.lng, lat: e.lat, items: [] };
+    cityGroups[key].items.push(i);
+  });
+
+  // 为每个同城组生成螺旋排列的坐标
+  const positions = []; // [lat, lng] for each entry
+  Object.values(cityGroups).forEach(g => {
+    const n = g.items.length;
+    const centerLat = g.lat, centerLng = g.lng;
+    g.items.forEach((entryIdx, idx) => {
+      if (n === 1) {
+        positions[entryIdx] = [centerLat, centerLng];
+      } else {
+        // 黄金角螺旋：每个点围绕中心均匀散开，层次分明
+        const angle = idx * 2.399963; // 黄金角 ≈ 137.5°
+        const r = 0.0005 + idx * 0.0006; // 第一圈 ~55m，逐圈递增 ~67m
+        const latR = r;
+        const lngR = r / Math.cos(centerLat * Math.PI / 180); // 经度补偿
+        positions[entryIdx] = [
+          centerLat + latR * Math.cos(angle),
+          centerLng + lngR * Math.sin(angle),
+        ];
+      }
+    });
+  });
+
+  entries.forEach((e, i) => {
+    const [lat, lng] = positions[i];
     const icon = createUserIcon(e.name, e.color);
-    const marker = L.marker([lat,lng],{icon}).addTo(userGroup);
-    marker.bindPopup('<b>'+escHtml(e.name)+'</b><br>'+escHtml(e.city));
+    const marker = L.marker([lat, lng], { icon }).addTo(userGroup);
+    marker.bindPopup('<b>' + escHtml(e.name) + '</b><br>' + escHtml(e.city));
     marker.on('click', function(ev) {
       L.DomEvent.stopPropagation(ev);
       toggleSelection(i);
