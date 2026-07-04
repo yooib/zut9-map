@@ -301,7 +301,7 @@ function updateMeasureHint() {
 window.clearSelection = clearSelection;
 
 // ===== 地图 =====
-const map = L.map('map', { center:[35.8,106.5], zoom:5, zoomControl:true, attributionControl:false });
+const map = L.map('map', { center:[35.8,106.5], zoom:6, zoomControl:true, attributionControl:false });
 const normalLayer = L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
   subdomains:'1234', maxZoom:18, minZoom:3,
 }).addTo(map);
@@ -384,7 +384,7 @@ function renderAll() {
     const centerLat = g.lat, centerLng = g.lng;
     // 按姓名排序
     const sorted = g.items.slice().sort((a, b) => entries[a].name.localeCompare(entries[b].name, 'zh'));
-    const spacing = 0.004; // 每个名字间隔约 450m
+    const spacing = 0.015; // 每个名字间隔约 1.7km
     const start = -(sorted.length - 1) * spacing / 2; // 居中
     sorted.forEach((entryIdx, i) => {
       positions[entryIdx] = [centerLat + start + i * spacing, centerLng];
@@ -470,7 +470,7 @@ document.getElementById('addBtn').addEventListener('click', function() {
   if (!coord) { alert('未找到城市"'+city+'"的坐标'); return; }
   entries.push({name,city,lng:coord[0],lat:coord[1],color:nextColor()});
   saveEntries(entries); renderAll(); renderList();
-  map.setView([coord[1],coord[0]], 8, {animate:true});
+  map.setView([coord[1],coord[0]], 10, {animate:true});
   ni.value=''; ci.value=''; ni.focus();
 });
 document.getElementById('cityInput').addEventListener('keydown',function(e){if(e.key==='Enter')document.getElementById('addBtn').click();});
