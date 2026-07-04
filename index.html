@@ -10,9 +10,12 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; height: 100vh; display: flex; flex-direction: column; }
-.header { background: linear-gradient(135deg, #1a5276, #154360); color: #fff; text-align: center; padding: 12px; font-size: 20px; letter-spacing: 4px; border-bottom: 2px solid #1f6f9f; z-index: 1000; }
+.header { background: linear-gradient(135deg, #1a5276, #154360); color: #fff; text-align: center; padding: 12px; font-size: 20px; letter-spacing: 4px; border-bottom: 2px solid #1f6f9f; z-index: 1000; position: relative; }
+.header .toggle-btn { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 16px; line-height: 1; transition: all .2s; }
+.header .toggle-btn:hover { background: rgba(255,255,255,0.35); }
 .main { display: flex; flex: 1; overflow: hidden; }
-.sidebar { width: 320px; background: #f5f7fa; display: flex; flex-direction: column; border-right: 1px solid #d0d7de; z-index: 999; }
+.sidebar { width: 320px; background: #f5f7fa; display: flex; flex-direction: column; border-right: 1px solid #d0d7de; z-index: 999; transition: width .3s, padding .3s, border .3s; overflow: hidden; }
+.sidebar.collapsed { width: 0; border-right: none; }
 .form-section { padding: 14px 18px; border-bottom: 1px solid #d0d7de; background: #fff; }
 .form-section label { color: #555; font-size: 12px; display: block; margin-bottom: 3px; font-weight: 500; }
 .form-section input { width: 100%; padding: 8px 10px; border: 1px solid #c0c7cf; border-radius: 6px; background: #fff; color: #333; font-size: 14px; outline: none; margin-bottom: 8px; transition: border .2s; }
@@ -70,7 +73,7 @@ body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; height: 100vh;
 </head>
 <body>
 
-<div class="header">zut（9）</div>
+<div class="header"><button class="toggle-btn" id="sidebarToggle" title="折叠侧边栏">☰</button>zut（9）</div>
 
 <div class="main">
   <div class="sidebar">
@@ -189,6 +192,13 @@ const COLOR_PALETTE = [
 ];
 let colorIdx = 0;
 function nextColor() { return COLOR_PALETTE[colorIdx++ % COLOR_PALETTE.length]; }
+
+// ===== 侧边栏折叠 =====
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  document.querySelector('.sidebar').classList.toggle('collapsed');
+  this.textContent = document.querySelector('.sidebar').classList.contains('collapsed') ? '▶' : '☰';
+  setTimeout(() => map.invalidateSize(), 300);
+});
 
 // ===== 管理员验证 =====
 const ADMIN_PW = 'zut2024';
