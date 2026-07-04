@@ -223,10 +223,23 @@ Object.keys(CITY_COORDS).forEach(city => {
 });
 
 const STORAGE_KEY = 'china_map_entries';
+const DEFAULT_ENTRIES = [
+  {name:"🐺",city:"武汉",lng:114.305,lat:30.593},
+  {name:"🐲",city:"佛山",lng:113.122,lat:23.022},
+  {name:"🐝",city:"西安",lng:108.94,lat:34.261},
+  {name:"🚢",city:"上海",lng:121.473,lat:31.23},
+  {name:"丨",city:"苏州",lng:120.595,lat:31.299},
+  {name:"🐿️",city:"天津",lng:117.191,lat:39.085},
+  {name:"R&M",city:"上海",lng:121.473,lat:31.23},
+  {name:"晨泊",city:"武汉",lng:114.305,lat:30.593},
+  {name:"日本人",city:"成都",lng:104.066,lat:30.573},
+];
 function loadEntries() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { return []; } }
 function saveEntries(e) { localStorage.setItem(STORAGE_KEY, JSON.stringify(e)); }
 let entries = loadEntries();
+if (entries.length === 0) { entries = DEFAULT_ENTRIES.map(function(e){return {name:e.name,city:e.city,lng:e.lng,lat:e.lat,color:COLOR_PALETTE[DEFAULT_ENTRIES.indexOf(e)%COLOR_PALETTE.length]};}); }
 entries.forEach(() => nextColor());
+colorIdx = entries.length;
 
 function findCityCoord(input) {
   const s = input.trim();
